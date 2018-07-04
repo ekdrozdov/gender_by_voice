@@ -1,0 +1,15 @@
+1) Install dev env:
+	anaconda
+	python with modules
+
+2) Build phonogramm
+
+3) Build spectrogram
+
+Python:
+numpy
+matplotlib
+scipy
+
+links:
+http://soundfile.sapp.org/doc/WaveFormat/

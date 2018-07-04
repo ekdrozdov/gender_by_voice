@@ -1,0 +1,2 @@
+audio_sample.wav _wave_params(nchannels=2, sampwidth=2, framerate=44100, nframes=182016, comptype='NONE', compname='not compressed')
+[0 0 0 ... 0 0 0]
