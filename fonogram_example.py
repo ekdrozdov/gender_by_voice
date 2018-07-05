@@ -35,7 +35,7 @@ wav = wave.open("sample_2.wav", mode="r")
 
 duration = nframes / framerate
 w, h = 800, 300
-k = 7#nframes/w/32
+k = (int)(nframes/w/32)
 DPI = 72
 peak = 256 ** sampwidth / 2
 

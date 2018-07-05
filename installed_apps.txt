@@ -1,0 +1,6 @@
+git (with MinGW)
+visual code
+python 3
+vimium
+google.com as starting page
+yandex search was disabled in browser
