@@ -20,59 +20,50 @@ def getSpectrogram(x, m, N):
         #z[i] = newcolumn
     return z
 
-filename = "audio_sample.wav"
+filename = "sample_female.wav"
 
 wv = wave.open(filename, mode='r')
 
-(nchammels, sampwidth, framerate, nframes, comtype, compname) = wv.getparams()
+info = (nchammels, sampwidth, framerate, 
+        nframes, comtype, compname) = wv.getparams()
+
+print(info)
 
 frames = wv.readframes(nframes)
 samples = np.frombuffer(frames, dtype=types[sampwidth])
 channel = samples[0::2]
 print(len(channel))
-channel = channel[0:10000]
+#channel = channel[0:10000]
 
 wv.close()
 
+shift = 130000
+m = windowsize = 7
+spectdursec = 1/100
+N = framerate * spectdursec
+N = 1000
+
+X = []
+for i in range(N - 1):
+    X.append(channel[i + shift:i + shift + m + 1])
+
+FX = []
+for i in range(N - 1):
+    v = (np.fft.fft(X[i]))
+    absv = np.absolute(v)
+    FX.append(absv)
+    print(i,"/", N - 2)
+
+im = plt.imshow(FX, interpolation='bilinear', extent=[0, 1000, -100, 100])
+matplotlib.colors.Normalize(vmin=-0.5, vmax=0.5)
+
+print(len(channel))
+start = 10000
+N = 10
+end = start + N
+print(channel[start:end])
+
+plt.show()
+
 # Clip is a chunk of samples.
 
-dx = 1
-dy = 1
-y, x = np.mgrid[slice(0, 100, 1), 
-                slice(1, 100, 1)]
-
-m = 1000
-N = len(channel)
-z = getSpectrogram(channel, m, N)
-#z = np.fft.fft(x[:m])
-
-z = np.sin(x**10 + np.cos(10 + y * x) * np.cos(x))
-z = z[:-1, :-1]
-levels = MaxNLocator(nbins=15).tick_values(z.min(), z.max())
-
-cmap = plt.get_cmap('PiYG')
-norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
-
-fig, (ax0, ax1) = plt.subplots(nrows=2)
-
-im = ax0.pcolormesh(x, y, z, cmap=cmap, norm=norm)
-fig.colorbar(im, ax=ax0)
-ax0.set_title('pcolormesh with levels')
-
-# contours are *point* based plots, so convert our bound into point
-# centers
-cf = ax1.contourf(x[:-1, :-1] + dx/2.,
-                  y[:-1, :-1] + dy/2., z, levels=levels,
-                  cmap=cmap)
-fig.colorbar(cf, ax=ax1)
-ax1.set_title('contourf with levels')
-
-# adjust spacing between subplots so `ax1` title and `ax0` tick labels
-# don't overlap
-fig.tight_layout()
-
-#plt.plot([1,2,3,4], [1,4,9,16])
-#plt.axis([0, 6, 0, 20])
-#plt.ylabel('y')
-#plt.xlabel('x')
-plt.show()

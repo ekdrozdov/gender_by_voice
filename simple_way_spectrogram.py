@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.io import wavfile
 
-sample_rate, samples = wavfile.read('audio_sample.wav')
+sample_rate, samples = wavfile.read('sample_2.wav')
 frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate)
 
 plt.pcolormesh(times, frequencies, spectrogram)

@@ -12,4 +12,11 @@ matplotlib
 scipy
 
 links:
+Wave format description:
 http://soundfile.sapp.org/doc/WaveFormat/
+
+Spectrogram building theory:
+https://www.princeton.edu/~cuff/ele201/files/spectrogram.pdf
+
+Discrete Fourier transform in python:
+https://docs.scipy.org/doc/numpy/reference/routines.fft.html
