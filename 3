@@ -48,7 +48,6 @@ def getspctgram(wv, durms, windowsizems, stepms, *argv):
     windowsize = int(msframert * windowsizems)
     offset = int(msframert * offsetms)
     step = int(msframert * stepms)
-    print("step", step)
 
     # TODO: check that (step * k + offset + windowsize + duration < nframes)
     # Check offset for out of range.
@@ -66,7 +65,7 @@ def getspctgram(wv, durms, windowsizems, stepms, *argv):
 
     X = []
     for i in range(N):
-        X.append(channel[i + offset: i + offset + m])
+        X.append(channel[i + offset: i + offset + m: step])
 
     FX = []
     if isverbose == 0:
@@ -90,28 +89,24 @@ def getspctgram(wv, durms, windowsizems, stepms, *argv):
 
 
 def normalize(FX, m):
-    FX = np.transpose(FX)
-    FX = FX[int(len(FX) / 2):]
-
     FX = np.multiply(FX, 1 / m)
     FX = np.log10(FX)
     FX = np.multiply(FX, 20)
-
     return FX
 
 
 def plotspctrgram(wv, FX, durms, wszms):
     print(len(FX))
     print(len(FX[0]))
-
+    FX = np.transpose(FX)
     (nchannels, sampwidth, framerate, nframes, comtype, compname) = wv.getparams()
-    wsz = wszms / 1000 * framerate
-    freqmax = framerate / 2
-    freqmin = framerate / wsz
+    freqmax = len(FX) * framerate / wszms / 2
+    #duration = len(FX)
+    FX = FX[:int(len(FX) / 2)]
+    FX = FX[::-1]
     scale = 1
-    im = plt.imshow(FX, interpolation='bilinear', extent=[0, durms * scale, freqmin, freqmax])
-    plt.xlabel("Time, ms")
-    plt.ylabel("Frequency, Hz")
+    im = plt.imshow(FX, interpolation='bilinear', extent=[0, durms * scale, 0, freqmax])
+    #im = plt.imshow(FX, interpolation='bilinear', extent=[0, 1000, 0, 4000])
     plt.show()
 
 
@@ -127,9 +122,9 @@ wv = wave.open(filename, mode='r')
 
 offsetms = 2000
 durms = 1000
-windowsizems = 15
+windowsizems = 50
 isverbose = 1
-stepms = 0.05 # 0.05 ms ~ 2 samples
+stepms = 1
 FX, m = getspctgram(wv, durms, windowsizems, stepms, offsetms, isverbose)
 normalize(FX, m)
 printinfo(wv, filename)
