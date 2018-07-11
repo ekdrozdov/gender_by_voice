@@ -26,6 +26,19 @@ def printinfo(wv, filename):
     print(f'Framerate: {framerate} (samps/sec)')
 
 
+def getcpstrgram(FX):
+    m = 2
+    FX = np.add(FX, j(2 * np.pi * m))
+    FX = np.log(FX)
+    CX = []
+    for i in range(N):
+        v = (np.fft.ifft(FX[i]))
+        #absv = np.absolute(v)
+        CX.append(v)
+
+    return CX
+
+
 # Funciton get lengths in milliseconds and converts it to samples lengths.
 def getspctgram(wv, durms, windowsizems, stepms, *argv):
     offsetms = 0
@@ -62,11 +75,11 @@ def getspctgram(wv, durms, windowsizems, stepms, *argv):
         duration = nframes - offset
 
     m = windowsize
-    N = duration
+    N = int(duration / step)
 
     X = []
     for i in range(N):
-        X.append(channel[i + offset: i + offset + m])
+        X.append(channel[i * step + offset: i * step + offset + m])
 
     FX = []
     if isverbose == 0:
@@ -101,9 +114,6 @@ def normalize(FX, m):
 
 
 def plotspctrgram(wv, FX, durms, wszms):
-    print(len(FX))
-    print(len(FX[0]))
-
     (nchannels, sampwidth, framerate, nframes, comtype, compname) = wv.getparams()
     wsz = wszms / 1000 * framerate
     freqmax = framerate / 2
@@ -125,13 +135,14 @@ else:
 
 wv = wave.open(filename, mode='r')
 
-offsetms = 2000
-durms = 1000
-windowsizems = 15
+offsetms = 0
+durms = 900
+windowsizems = 100
 isverbose = 1
-stepms = 0.05 # 0.05 ms ~ 2 samples
+stepms = 0.8 # 0.05 ms ~ 2 samples
 FX, m = getspctgram(wv, durms, windowsizems, stepms, offsetms, isverbose)
-normalize(FX, m)
+FX = getcpstrgram(FX)
+#FX = normalize(FX, m)
 printinfo(wv, filename)
 plotspctrgram(wv, FX, durms, windowsizems)
 
