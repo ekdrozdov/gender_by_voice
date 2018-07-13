@@ -11,6 +11,10 @@ numpy
 matplotlib
 scipy
 
+Human voice range: 80 -- 3400 Hz
+Male fundamental frequency: 85 -- 180 Hz
+Female fundamental frequency: 165 -- 255 Hz
+
 links:
 Wave format description:
 http://soundfile.sapp.org/doc/WaveFormat/
